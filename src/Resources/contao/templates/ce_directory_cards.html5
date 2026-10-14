@@ -1,0 +1,21 @@
+<?php $this->extend('block_unsearchable'); ?>
+<?php $this->block('content'); ?>
+<?php foreach ($this->rows as $row): ?>
+<div class="directory-card<?= $this->presentation === 'cards' ? ' partnerartikel' : '' ?>">
+  <h3><?= \Contao\StringUtil::specialchars($row['_entry_title']) ?></h3>
+  <?php if (!empty($row['LOGO'])): ?><div><?= $this->cellFormatter->render('LOGO', (string) $row['LOGO']) ?></div><?php endif; ?>
+  <?php if ($this->presentation === 'cards'): ?>
+    <?php foreach ([1, 2] as $index): ?>
+      <?php if (!empty($row['ANSPRECHPARTNER'.$index])): ?>
+        <p><?= $index === 1 ? 'Ansprechpartner<br>' : '' ?><strong><?= \Contao\StringUtil::specialchars($row['ANSPRECHPARTNER'.$index]) ?></strong><?php if (!empty($row['Funktion'.$index])): ?><br><?= \Contao\StringUtil::specialchars($row['Funktion'.$index]) ?><?php endif; ?></p>
+      <?php endif; ?>
+    <?php endforeach; ?>
+    <?php if ($this->detailUrl): ?><p><a href="<?= \Contao\StringUtil::specialchars($this->detailUrl.'?directory_entry='.$row['_entry_id']) ?>">Details anzeigen</a></p><?php endif; ?>
+  <?php else: ?>
+    <dl><?php foreach ($this->cardColumns as $column): ?><?php if ($column['key'] !== 'LOGO' && trim((string) ($row[$column['key']] ?? '')) !== ''): ?><dt><?= \Contao\StringUtil::specialchars($column['value']) ?></dt><dd><?= $this->cellFormatter->render($column['key'], (string) $row[$column['key']]) ?></dd><?php endif; ?><?php endforeach; ?></dl>
+  <?php endif; ?>
+  <hr>
+</div>
+<?php endforeach; ?>
+<?php if (!$this->rows): ?><p>Kein Eintrag gefunden.</p><?php endif; ?>
+<?php $this->endblock(); ?>

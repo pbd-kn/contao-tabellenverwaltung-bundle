@@ -1,4 +1,4 @@
--- Nur die sieben Schema-Ergänzungen des Tabellenverwaltung-Bundles.
+-- Nur die 16 Schema-Ergänzungen des Tabellenverwaltung-Bundles.
 -- Einmalig in der Datenbank der Contao-Website ausführen.
 CREATE TABLE `tl_directory` (
   `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
@@ -27,3 +27,12 @@ ALTER TABLE `tl_content` ADD `directoryDisplayColumns` TEXT NULL;
 ALTER TABLE `tl_content` ADD `directorySearchColumns` TEXT NULL;
 ALTER TABLE `tl_content` ADD `directoryOrder` TEXT NULL;
 ALTER TABLE `tl_content` ADD `directoryDetailColumns` TEXT NULL;
+ALTER TABLE `tl_content` ADD `directoryPresentation` VARCHAR(16) NOT NULL DEFAULT 'table';
+ALTER TABLE `tl_content` ADD `directoryDetailPage` INT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `tl_module` ADD `directoryId` INT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `tl_module` ADD `directoryPresentation` VARCHAR(16) NOT NULL DEFAULT 'table';
+ALTER TABLE `tl_module` ADD `directoryDetailPage` INT UNSIGNED NOT NULL DEFAULT 0;
+ALTER TABLE `tl_module` ADD `directoryDisplayColumns` TEXT NULL;
+ALTER TABLE `tl_module` ADD `directorySearchColumns` TEXT NULL;
+ALTER TABLE `tl_module` ADD `directoryOrder` TEXT NULL;
+ALTER TABLE `tl_module` ADD `directoryDetailColumns` TEXT NULL;

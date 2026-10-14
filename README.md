@@ -29,7 +29,7 @@ composer require pbd-kn/contao-tabellenverwaltung-bundle:dev-main
 php vendor/bin/contao-console contao:migrate --dry-run
 ```
 
-Datenbank vorher sichern und die Vorschau prüfen. Die Contao-Schemaprüfung kann auch Löschungen für andere Erweiterungen vorschlagen. Nur die gewünschten Änderungen ausführen. `install-directory.sql` enthält ausschließlich die sieben Schema-Ergänzungen dieses Bundles und ist für eine einmalige Neuinstallation vorgesehen.
+Datenbank vorher sichern und die Vorschau prüfen. Die Contao-Schemaprüfung kann auch Löschungen für andere Erweiterungen vorschlagen. Nur die gewünschten Änderungen ausführen. `install-directory.sql` enthält ausschließlich die 16 Schema-Ergänzungen dieses Bundles und ist für eine einmalige Neuinstallation vorgesehen.
 
 ## Lokale Entwicklung
 
@@ -96,8 +96,12 @@ SQLite im Arbeitsspeicher prüft Import, Vorschau, UTF-8, Duplikatschutz und Rep
 
 ## Grenzen
 
-Keine Seitennavigation, kein CSV-Export und keine eigenständigen Detailseiten. Suche/Sortierung erfolgen im Arbeitsspeicher; große Verzeichnisse benötigen eine Erweiterung. Beliebiges HTML und serialisierte EFG-Mehrfachwerte werden nicht übernommen. Menü und Seitenlayout sind Teil der Website.
+Tabellen, Partnerkarten und Detailansichten können als Inhaltselement oder Frontend-Modul eingebunden werden. Partnerkarten verlinken auf eine konfigurierte Detailseite; die Auswahl erfolgt über directory_entry, ältere numerische EFG-Parameter werden über legacyId unterstützt. Keine Seitennavigation und kein CSV-Export. Suche/Sortierung erfolgen im Arbeitsspeicher; große Verzeichnisse benötigen eine Erweiterung. Beliebiges HTML und serialisierte EFG-Mehrfachwerte werden nicht übernommen. Menü und Seitenlayout sind Teil der Website.
 
 ## Lizenz
 
 LGPL-3.0-or-later, siehe [LICENSE](LICENSE).
+
+## Partnerkarten und Details
+
+Bei Inhaltselementen und Modulen lässt sich die Darstellung Tabelle, Partnerkarten oder Details auswählen. Partnerkarten verwenden die Klasse partnerartikel für bestehende Rotationsskripte und zeigen die Ansprechpartner aus den Verzeichnisdaten. Bei Details werden nur veröffentlichte Einträge des gewählten Verzeichnisses angezeigt. Ohne ausgewählte Eintrags-ID erscheint die vollständige Detailübersicht.

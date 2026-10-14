@@ -5,9 +5,17 @@ use Contao\ContentElement;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Input;
+use Contao\PageModel;
 final class DirectoryTable extends ContentElement
 {
     protected $strTemplate = 'ce_directory_table';
+    public function __construct($model, $column = 'main')
+    {
+        parent::__construct($model, $column);
+        if (!$this->customTpl && in_array($this->directoryPresentation, ['cards', 'detail'], true)) {
+            $this->strTemplate = 'ce_directory_cards';
+        }
+    }
     protected function compile(): void
     {
         $db = System::getContainer()->get('database_connection');
@@ -34,13 +42,21 @@ final class DirectoryTable extends ContentElement
         }
         $query = Input::get($searchName);
         $query = is_string($query) ? mb_substr(trim($query), 0, 200) : '';
-        $entries = $db->fetchAllAssociative("SELECT data FROM tl_directory_entry WHERE pid=? AND published='1' ORDER BY sorting,id", [$this->directoryId]);
+        $entries = $db->fetchAllAssociative("SELECT id,legacyId,title,data FROM tl_directory_entry WHERE pid=? AND published='1' ORDER BY sorting,id", [$this->directoryId]);
+        $detailId = Input::get('directory_entry');
+        $legacyId = Input::get('infoIndustrie') ?? Input::get('Industrie') ?? Input::get('infoSachverstaendige');
         $rows = [];
         foreach ($entries as $entry) {
             $row = array_column(StringUtil::deserialize($entry['data'], true), 'value', 'key');
+            if ($this->directoryPresentation === 'detail') {
+                if ($detailId !== null && (!is_string($detailId) || !ctype_digit($detailId) || (int) $detailId !== (int) $entry['id'])) { continue; }
+                if ($detailId === null && $legacyId !== null && (!is_string($legacyId) || !ctype_digit($legacyId) || (int) $legacyId !== (int) $entry['legacyId'])) { continue; }
+            }
             if ($query !== '' && $searchColumns) {
                 if (mb_stripos((string) ($row[$searchField] ?? ''), $query) === false) { continue; }
             }
+            $row['_entry_id'] = (int) $entry['id'];
+            $row['_entry_title'] = $entry['title'];
             $rows[] = $row;
         }
         $order = $select((string) $this->directoryOrder);
@@ -65,6 +81,10 @@ final class DirectoryTable extends ContentElement
         }
         unset($column);
         $this->Template->searchColumns = $searchColumns;
+        $this->Template->presentation = $this->directoryPresentation;
+        $this->Template->cardColumns = $this->Template->detailColumns ?: $this->Template->columns;
+        $detailPage = $this->directoryDetailPage ? PageModel::findByPk($this->directoryDetailPage) : null;
+        $this->Template->detailUrl = $detailPage ? $detailPage->getFrontendUrl() : '';
         $this->Template->query = $query;
         $this->Template->rows = $rows;
     }
