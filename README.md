@@ -105,3 +105,8 @@ LGPL-3.0-or-later, siehe [LICENSE](LICENSE).
 ## Partnerkarten und Details
 
 Bei Inhaltselementen und Modulen lässt sich die Darstellung Tabelle, Partnerkarten oder Details auswählen. Partnerkarten verwenden die Klasse partnerartikel für bestehende Rotationsskripte und zeigen die Ansprechpartner aus den Verzeichnisdaten. Bei Details werden nur veröffentlichte Einträge des gewählten Verzeichnisses angezeigt. Ohne ausgewählte Eintrags-ID erscheint die vollständige Detailübersicht.
+
+## EFG-Import im Backend
+
+Backend-Administratoren können unter **Inhalte → EFG-Daten übernehmen** ein Quellverzeichnis wählen, eine Vorschau prüfen und die bestätigte Übernahme starten. Quelldaten bleiben erhalten; importierte Einträge sind unveröffentlicht. Bestehende Zielnamen verhindern Doppelimporte. EFG kann unabhängig davon weiterhin für Kontaktformular-Mails installiert bleiben.
+
