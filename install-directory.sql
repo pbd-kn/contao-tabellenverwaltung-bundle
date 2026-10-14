@@ -1,5 +1,5 @@
--- Nur die drei Schema-Ergänzungen des Directory-Bundles.
--- Einmalig in der Datenbank co4_fliesen ausführen.
+-- Nur die sieben Schema-Ergänzungen des Tabellenverwaltung-Bundles.
+-- Einmalig in der Datenbank der Contao-Website ausführen.
 CREATE TABLE `tl_directory` (
   `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
   `tstamp` INT UNSIGNED DEFAULT 0 NOT NULL,

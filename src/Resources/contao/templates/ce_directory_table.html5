@@ -17,5 +17,3 @@
 </div>
 <?php if (!$this->rows): ?><p>Keine Einträge gefunden.</p><?php endif; ?>
 <?php $this->endblock(); ?>
-
-
