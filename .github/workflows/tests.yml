@@ -4,6 +4,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - php: '8.2'
@@ -19,7 +20,10 @@ jobs:
           tools: composer:v2
           coverage: none
       - run: composer require --no-update "contao/core-bundle:${{ matrix.contao }}"
+      # Compatibility testing only: legacy 4.13 is blocked by current advisories.
+      - if: matrix.contao == '4.13.*'
+        run: composer config --no-plugins policy.advisories.block false
       - run: composer update --no-interaction --prefer-dist --no-plugins --no-scripts
-      - run: composer validate --no-check-lock
+      - run: composer --no-plugins validate --no-check-lock
       - run: find src tests -name '*.php' -print0 | xargs -0 -n1 php -l
-      - run: composer test
+      - run: composer --no-plugins test
