@@ -1,0 +1,25 @@
+name: Tests
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - php: '8.2'
+            contao: '4.13.*'
+          - php: '8.2'
+            contao: '5.3.*'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl, mbstring, gd, pdo_sqlite
+          tools: composer:v2
+          coverage: none
+      - run: composer require --no-update "contao/core-bundle:${{ matrix.contao }}"
+      - run: composer update --no-interaction --prefer-dist --no-plugins --no-scripts
+      - run: composer validate --no-check-lock
+      - run: find src tests -name '*.php' -print0 | xargs -0 -n1 php -l
+      - run: composer test
