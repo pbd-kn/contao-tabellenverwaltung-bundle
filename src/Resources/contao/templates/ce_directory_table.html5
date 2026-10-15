@@ -1,5 +1,37 @@
 <?php $this->extend('block_unsearchable'); ?>
 <?php $this->block('content'); ?>
+<?php
+$detailParameter = 'directory_detail_'.$this->id;
+$detailId = \Contao\Input::get($detailParameter);
+$isDetail = $this->detailColumns && $detailId !== null;
+$detailRows = $isDetail ? array_filter($this->rows, static function (array $row) use ($detailId): bool {
+    return is_string($detailId) && ctype_digit($detailId) && (int) $detailId === $row['_entry_id'];
+}) : [];
+?>
+<style>
+.directory_table { width:100%; border-collapse:collapse; }
+.directory_table th, .directory_table td { padding:5px 3px; text-align:left; vertical-align:top; }
+.directory_table tbody tr:nth-child(odd), .directory-detail-table tr:nth-child(odd) { background:#d3d3d3; }
+.directory-detail-table { width:auto; max-width:100%; border-collapse:collapse; margin:0 0 4px 30px; }
+.directory-detail-table th, .directory-detail-table td { padding:3px 5px; text-align:left; vertical-align:top; font-weight:normal; overflow-wrap:anywhere; }
+.directory-detail-table th { min-width:113px; }
+.directory-info { white-space:nowrap; }
+</style>
+<?php if ($isDetail): ?>
+<div class="directory-detail ce_table listing">
+<?php foreach ($detailRows as $row): ?>
+<table class="directory-detail-table single_record" aria-label="Details zu <?= \Contao\StringUtil::specialchars($row['_entry_title']) ?>">
+<tbody>
+<?php foreach ($this->detailColumns as $column): ?>
+<tr><th scope="row"><?= \Contao\StringUtil::specialchars($column['value']) ?>:</th><td><?= $this->cellFormatter->render($column['key'], (string) ($row[$column['key']] ?? '')) ?></td></tr>
+<?php endforeach; ?>
+</tbody>
+</table>
+<?php endforeach; ?>
+<?php if (!$detailRows): ?><p>Kein Eintrag gefunden.</p><?php endif; ?>
+<a href="<?= \Contao\Controller::addToUrl('', false, [$detailParameter]) ?>">Zurück</a>
+</div>
+<?php else: ?>
 <?php if ($this->searchEnabled): ?>
 <form method="get" class="directory-search">
   <select name="<?= $this->searchFieldName ?>" aria-label="Suchfeld auswählen">
@@ -9,11 +41,13 @@
   <button type="submit">Suchen</button>
 </form>
 <?php endif; ?>
+<p class="directory-count">Anzahl Einträge: <?= count($this->rows) ?></p>
 <div class="directory-scroll ce_table listing" style="overflow-x:auto">
 <table class="directory_table all_records">
-  <thead><tr><?php foreach ($this->columns as $column): ?><th scope="col"><?= \Contao\StringUtil::specialchars($column['value']) ?></th><?php endforeach; ?><?php if ($this->detailColumns): ?><th scope="col">Details</th><?php endif; ?></tr></thead>
-  <tbody><?php foreach ($this->rows as $row): ?><tr><?php foreach ($this->columns as $column): ?><td><?= $this->cellFormatter->render($column['key'], (string) ($row[$column['key']] ?? '')) ?></td><?php endforeach; ?><?php if ($this->detailColumns): ?><td><details><summary>Details anzeigen</summary><dl><?php foreach ($this->detailColumns as $column): ?><?php if (trim((string) ($row[$column['key']] ?? '')) !== ''): ?><dt><?= \Contao\StringUtil::specialchars($column['value']) ?></dt><dd><?= $this->cellFormatter->render($column['key'], (string) $row[$column['key']]) ?></dd><?php endif; ?><?php endforeach; ?></dl></details></td><?php endif; ?></tr><?php endforeach; ?></tbody>
+  <thead><tr><?php foreach ($this->columns as $column): ?><th scope="col"><?= \Contao\StringUtil::specialchars($column['value']) ?></th><?php endforeach; ?><?php if ($this->detailColumns): ?><th scope="col"><span class="invisible">Details</span></th><?php endif; ?></tr></thead>
+  <tbody><?php foreach ($this->rows as $row): ?><tr><?php foreach ($this->columns as $column): ?><td><?= $this->cellFormatter->render($column['key'], (string) ($row[$column['key']] ?? '')) ?></td><?php endforeach; ?><?php if ($this->detailColumns): ?><td class="directory-info"><a href="<?= \Contao\Controller::addToUrl($detailParameter.'='.$row['_entry_id'], false) ?>" aria-label="Details zu <?= \Contao\StringUtil::specialchars($row['_entry_title']) ?>" title="Details anzeigen">ℹ</a></td><?php endif; ?></tr><?php endforeach; ?></tbody>
 </table>
 </div>
 <?php if (!$this->rows): ?><p>Keine Einträge gefunden.</p><?php endif; ?>
+<?php endif; ?>
 <?php $this->endblock(); ?>
