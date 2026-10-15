@@ -8,6 +8,15 @@ $rows = $isCardDetail ? array_filter($this->rows, static function (array $row) u
     return is_string($detailId) && ctype_digit($detailId) && (int) $detailId === $row['_entry_id'];
 }) : $this->rows;
 ?>
+<style>
+.directory-card { min-width:0; max-width:100%; overflow-wrap:anywhere; }
+.directory-card h3 { font-size:1.25rem; line-height:1.3; margin:1rem 0 .75rem; }
+.directory-card img { max-width:100% !important; height:auto; }
+.directory-card dl { margin:1rem 0; }
+.directory-card dt { float:none; width:auto; margin:.85rem 0 .15rem; font-size:.8rem; font-weight:600; line-height:1.4; color:#555; }
+.directory-card dd { margin:0; padding:0; line-height:1.5; min-width:0; }
+.directory-card dd a { overflow-wrap:anywhere; word-break:break-word; }
+</style>
 <?php foreach ($rows as $row): ?>
 <div class="directory-card<?= $this->presentation === 'cards' && !$isCardDetail ? ' partnerartikel' : '' ?>">
   <h3><?= \Contao\StringUtil::specialchars($row['_entry_title']) ?></h3>
@@ -20,7 +29,18 @@ $rows = $isCardDetail ? array_filter($this->rows, static function (array $row) u
     <?php endforeach; ?>
     <p><a href="<?= \Contao\Controller::addToUrl($detailParameter.'='.$row['_entry_id'], false) ?>">Details anzeigen</a></p>
   <?php else: ?>
-    <dl><?php foreach ($this->cardColumns as $column): ?><?php if ($column['key'] !== 'LOGO' && trim((string) ($row[$column['key']] ?? '')) !== ''): ?><dt><?= \Contao\StringUtil::specialchars($column['value']) ?></dt><dd><?= $this->cellFormatter->render($column['key'], (string) $row[$column['key']]) ?></dd><?php endif; ?><?php endforeach; ?></dl>
+    <dl><?php foreach ($this->cardColumns as $column): ?>
+      <?php
+      $key = strtoupper($column['key']);
+      if (in_array($key, ['LOGO', 'IDALIAS', 'FIRMA'], true) || trim((string) ($row[$column['key']] ?? '')) === '') { continue; }
+      $labels = ['ANSPRECHPARTNER' => 'Ansprechpartner', 'FUNKTION' => 'Funktion', 'TELEFAX' => 'Fax', 'TELEFON' => 'Telefon', 'MOBIL' => 'Mobil', 'EMAIL' => 'E-Mail', 'INTERNET' => 'Website', 'STRASSE' => 'Straße', 'PLZ' => 'PLZ', 'ORT' => 'Ort'];
+      $baseKey = preg_replace('/[0-9]+$/D', '', $key);
+      $label = $column['value'];
+      if (strcasecmp($label, $column['key']) === 0) { $label = $labels[$baseKey] ?? $label; }
+      ?>
+      <dt><?= \Contao\StringUtil::specialchars($label) ?></dt>
+      <dd><?= $this->cellFormatter->render($column['key'], (string) $row[$column['key']]) ?></dd>
+    <?php endforeach; ?></dl>
   <?php endif; ?>
   <hr>
 </div>
