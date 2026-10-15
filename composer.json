@@ -8,5 +8,5 @@
   "require": {"php": "^8.1", "contao/core-bundle": "^4.13 || ^5.3", "contao/manager-plugin": "^2.0"},
   "autoload": {"psr-4": {"PBDKN\\TabellenverwaltungBundle\\": "src/"}},
   "extra": {"contao-manager-plugin": "PBDKN\\TabellenverwaltungBundle\\ContaoManager\\Plugin"},
-  "scripts": {"test": ["@php tests/import.php", "@php tests/format.php"]}
+  "scripts": {"test": ["@php tests/import.php", "@php tests/format.php", "@php tests/csv.php"]}
 }

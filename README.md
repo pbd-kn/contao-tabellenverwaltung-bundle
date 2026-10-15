@@ -96,7 +96,7 @@ SQLite im Arbeitsspeicher prüft Import, Vorschau, UTF-8, Duplikatschutz und Rep
 
 ## Grenzen
 
-Tabellen, Partnerkarten und Detailansichten können als Inhaltselement oder Frontend-Modul eingebunden werden. Partnerkarten verlinken auf eine konfigurierte Detailseite; die Auswahl erfolgt über directory_entry, ältere numerische EFG-Parameter werden über legacyId unterstützt. Keine Seitennavigation und kein CSV-Export. Suche/Sortierung erfolgen im Arbeitsspeicher; große Verzeichnisse benötigen eine Erweiterung. Beliebiges HTML und serialisierte EFG-Mehrfachwerte werden nicht übernommen. Menü und Seitenlayout sind Teil der Website.
+Tabellen, Partnerkarten und Detailansichten können als Inhaltselement oder Frontend-Modul eingebunden werden. Partnerkarten verlinken auf eine konfigurierte Detailseite; die Auswahl erfolgt über directory_entry, ältere numerische EFG-Parameter werden über legacyId unterstützt. Keine Seitennavigation. Suche/Sortierung erfolgen im Arbeitsspeicher; große Verzeichnisse benötigen eine Erweiterung. Beliebiges HTML und serialisierte EFG-Mehrfachwerte werden nicht übernommen. Menü und Seitenlayout sind Teil der Website.
 
 ## Lizenz
 
@@ -109,4 +109,24 @@ Bei Inhaltselementen und Modulen lässt sich die Darstellung Tabelle, Partnerkar
 ## EFG-Import im Backend
 
 Backend-Administratoren können unter **Inhalte → EFG-Daten übernehmen** ein Quellverzeichnis wählen, eine Vorschau prüfen und die bestätigte Übernahme starten. Quelldaten bleiben erhalten; importierte Einträge sind unveröffentlicht. Bestehende Zielnamen verhindern Doppelimporte. EFG kann unabhängig davon weiterhin für Kontaktformular-Mails installiert bleiben.
+
+## CSV-Import und CSV-Export im Backend
+
+Unter **Inhalte → CSV importieren / exportieren** können Administratoren ein vorhandenes Verzeichnis auswählen und dessen Einträge als CSV herunterladen oder gesammelt einlesen. Das Verzeichnis und seine Spalten zuerst unter **Verzeichnisse** anlegen. Auch ein leeres Verzeichnis lässt sich als Vorlage exportieren. Dafür sind weder SSH noch FTP oder Datenbankänderungen erforderlich.
+
+1. Verzeichnis auswählen und **Auswählen** anklicken.
+2. Mit **CSV herunterladen** alle Einträge einschließlich unveröffentlichter Einträge exportieren.
+3. Die Datei beispielsweise in Excel über **Daten → Aus Text/CSV** öffnen. PLZ, Telefonnummern und IDs als Text behandeln, damit führende Nullen erhalten bleiben. Wieder als CSV UTF-8 speichern.
+4. Zum Einlesen die Datei auswählen und **Datei laden und Spalten zuordnen** anklicken.
+5. Die CSV-Überschriften den Verzeichnisfeldern zuordnen. Passende Feldschlüssel oder Beschriftungen werden automatisch vorgeschlagen.
+6. **Vorschau erstellen** anklicken. Sie nennt die Anzahl neuer und zu aktualisierender Einträge und zeigt die ersten zehn Datensätze.
+7. Die Vorschau bestätigen und **Jetzt importieren** anklicken. Erst jetzt wird gespeichert.
+
+Die Exportdatei enthält `_id` (Eintrags-ID), `_title` (Bezeichnung), `_csv_format` (technische Formatkennung) und die Feldschlüssel als Überschriften. `_id` und `_title` sind optional beim Einlesen. Für neue Einträge `_id` leer lassen; eine bestehende ID muss zum ausgewählten Verzeichnis gehören. Ohne ID entstehen immer neue Einträge, auch beim erneuten Einlesen derselben Datei. Beim Übertragen in ein anderes Verzeichnis die IDs leeren. `_csv_format` bei unveränderten Exportdateien beibehalten; die Kennung ermöglicht die Rückwandlung des Excel-Formelschutzes.
+
+Neue Einträge sind unveröffentlicht. Bei Aktualisierungen bleiben Veröffentlichungsstatus, Sortierung und EFG-Herkunfts-ID erhalten. Nicht zugeordnete Felder behalten ihre bisherigen Werte; leere zugeordnete Zellen leeren den jeweiligen Wert. Bei fehlender Bezeichnung wird für neue Einträge Firma bzw. Vor-/Nachname verwendet. Es werden keine Einträge gelöscht. Ein Import ist eine gemeinsame Datenbanktransaktion; ungültige IDs oder zwischenzeitlich veränderte Einträge führen zum Abbruch ohne Teilimport. Direkte CSV-Änderungen erzeugen keine Contao-Versionen; vor größeren Änderungen eine Datenbanksicherung erstellen.
+
+Import: maximal 5 MB und 10.000 Datensätze, zusätzlich gilt das PHP-Uploadlimit. Kopfzeile erforderlich; Semikolon, Komma und Tabulator (automatisch oder auswählbar), UTF-8 mit/ohne BOM sowie Windows-1252 werden unterstützt. Mehrzeilige und durch Anführungszeichen geschützte Werte bleiben erhalten. Export: UTF-8 mit BOM und Semikolon. Potenzielle Excel-Formeln werden mit einem Apostroph entschärft und beim Rückimport einer Datei mit Formatkennung wiederhergestellt. Behalte die Kennung nur bei, wenn die Datei auf diesem Export beruht. Dateien enthalten auch nicht veröffentlichte Daten und sind entsprechend vertraulich zu behandeln.
+
+Die CSV-Tests prüfen Neuanlage, Vorschau ohne Schreibzugriff, Aktualisierung ohne Duplikate, Teilaktualisierungen, Status-Erhaltung, Kodierung, Trennzeichen, Zeilenumbrüche, Formelschutz mit Rückimport, ungültige/fremde/doppelte IDs, veraltete Vorschauen und vollständiges Zurückrollen bei Fehlern.
 
