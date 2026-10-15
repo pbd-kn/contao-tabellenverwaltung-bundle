@@ -162,3 +162,7 @@ Import: maximal 5 MB und 10.000 Datensätze, zusätzlich gilt das PHP-Uploadlimi
 
 Die CSV-Tests prüfen Neuanlage, Vorschau ohne Schreibzugriff, Aktualisierung ohne Duplikate, Teilaktualisierungen, Status-Erhaltung, Kodierung, Trennzeichen, Zeilenumbrüche, Formelschutz mit Rückimport, ungültige/fremde/doppelte IDs, veraltete Vorschauen und vollständiges Zurückrollen bei Fehlern.
 
+
+## Mehrere Einträge veröffentlichen
+
+In der Eintragsliste einer Tabelle **Mehrere bearbeiten** öffnen, die gewünschten Einträge oder **Alle auswählen** markieren und **Überschreiben** anklicken. Anschließend nur das Feld **Veröffentlicht** auswählen, mit **Weiter** bestätigen, das Häkchen **Veröffentlicht** setzen und speichern. Der Wert wird gemeinsam für alle ausgewählten Einträge gesetzt. Zum gemeinsamen Zurücknehmen der Veröffentlichung das Häkchen entfernen. Mit **Bearbeiten** lassen sich die ausgewählten Einträge stattdessen einzeln auf einer gemeinsamen Formularseite ändern. Die Änderungen nutzen Contaos reguläre Datensatzversionierung.

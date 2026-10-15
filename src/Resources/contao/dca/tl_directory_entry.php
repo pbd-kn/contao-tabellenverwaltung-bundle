@@ -5,6 +5,14 @@ $GLOBALS['TL_DCA']['tl_directory_entry'] = [
     'config' => ['dataContainer' => DC_Table::class, 'ptable' => 'tl_directory', 'enableVersioning' => true, 'sql' => ['keys' => ['id' => 'primary', 'pid' => 'index', 'pid,legacyId' => 'unique']]],
     'list' => [
         'sorting' => ['mode' => 4, 'fields' => ['sorting'], 'headerFields' => ['title'], 'panelLayout' => 'search', 'child_record_callback' => [EntryData::class, 'label']],
+        'global_operations' => [
+            'all' => [
+                'label' => ['Mehrere bearbeiten', 'Mehrere Einträge auswählen und gemeinsam bearbeiten'],
+                'href' => 'act=select',
+                'class' => 'header_edit_all',
+                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
+            ],
+        ],
         'operations' => [
             'edit' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
             'copy' => ['href' => 'act=copy', 'icon' => 'copy.svg'],
