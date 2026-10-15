@@ -1,20 +1,36 @@
 <?php $escape = static fn($value) => \Contao\StringUtil::specialchars((string) $value); ?>
-<div id="tl_directory_import" class="tl_formbody_edit">
-<h2>EFG-Verzeichnis übernehmen</h2>
-<p>Die Übernahme kopiert die Daten in ein neues Verzeichnis. EFG-Quelldaten bleiben erhalten. Neue Einträge sind zunächst unveröffentlicht.</p>
+<?php $this->insert('be_directory_styles'); ?>
+<div id="tl_directory_import" class="tl_formbody_edit table-management">
+<p class="tm-intro">Hier kopierst du bestehende EFG-Tabellendaten in die Tabellenverwaltung. Die Quelldaten bleiben erhalten. Neue Einträge sind zunächst unveröffentlicht.</p>
 <?php if ($this->error): ?><p class="tl_error"><?= $escape($this->error) ?></p><?php endif; ?>
 <?php if ($this->message): ?><pre class="tl_info"><?= $escape($this->message) ?></pre><?php endif; ?>
 <?php if (!$this->available): ?><p>Es wurden keine EFG-Quelltabellen gefunden.</p><?php elseif (!$this->forms): ?><p>Keine gespeicherten EFG-Einträge vorhanden.</p><?php else: ?>
+<section class="tm-section"><h2>1. Quelle und neue Tabelle auswählen</h2>
 <form method="post">
 <input type="hidden" name="FORM_SUBMIT" value="directory_import">
 <input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
-<p><label for="directory_source">EFG-Verzeichnis</label><br><select class="tl_select" id="directory_source" name="source" required>
+<p><label for="directory_source">Bisherige EFG-Tabelle</label><br><select class="tl_select" id="directory_source" name="source" required>
 <option value="">Bitte auswählen</option><?php foreach ($this->forms as $form): ?><option value="<?= $escape($form['form']) ?>"<?= $this->source === $form['form'] ? ' selected' : '' ?>><?= $escape($form['form']) ?> (<?= (int) $form['count'] ?> Einträge)</option><?php endforeach; ?>
 </select></p>
-<p><label for="directory_target">Name des neuen Verzeichnisses</label><br><input class="tl_text" id="directory_target" type="text" name="title" value="<?= $escape($this->targetTitle) ?>" maxlength="255" required></p>
+<p><label for="directory_target">Name der neuen Tabelle</label><br><input class="tl_text" id="directory_target" type="text" name="title" value="<?= $escape($this->targetTitle) ?>" maxlength="255" required><br>Wird aus der Auswahl übernommen. Du kannst einen anderen Namen eingeben.</p>
 <p><button class="tl_submit" name="action" value="preview">Vorschau prüfen</button></p>
-<?php if ($this->preview): ?><p><label><input type="checkbox" name="confirmed" value="1"> Ich habe die Vorschau geprüft und möchte die Einträge kopieren.</label></p><p><button class="tl_submit" name="action" value="execute">Jetzt übernehmen</button></p><?php endif; ?>
-</form>
+<?php if ($this->preview): ?><h2>2. Übernahme bestätigen</h2><p><label><input type="checkbox" name="confirmed" value="1"> Ich habe die Vorschau geprüft und möchte die Einträge kopieren.</label></p><p><button class="tl_submit" name="action" value="execute">Jetzt übernehmen</button></p><?php endif; ?>
+</form></section>
 <?php endif; ?>
-<p><a href="contao?do=directories">Zur Verzeichnisverwaltung</a></p>
+<p><a href="contao?do=directories">Zur Tabellenübersicht</a></p>
 </div>
+<script>
+(function () {
+    const source = document.getElementById('directory_source');
+    const target = document.getElementById('directory_target');
+    if (!source || !target) return;
+    let previousSource = source.value;
+    if (target.value.trim() === '') target.value = source.value;
+    source.addEventListener('change', function () {
+        if (target.value.trim() === '' || target.value === previousSource) {
+            target.value = source.value;
+        }
+        previousSource = source.value;
+    });
+})();
+</script>

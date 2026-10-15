@@ -2,6 +2,38 @@
 
 Eigenständige Tabellen und Verzeichnisse für Contao. Keine EFG-Abhängigkeit für Verwaltung oder Ausgabe.
 
+## Backend-Menü
+
+Die eigene Menügruppe **Tabellenverwaltung** bündelt **Tabellen**, **EFG-Daten übernehmen** und **CSV importieren / exportieren**. Die Importseiten führen mit getrennten Abschnitten durch Auswahl, Zuordnung, Vorschau und Bestätigung.
+
+## Insert-Tags für einzelne Einträge
+
+Die ID eines veröffentlichten Eintrags anhand von Tabellenname und Bezeichnung ermitteln:
+
+```text
+{{direntry::Mitgliedsbetriebe::Hilzinger GmbH & Co. KG}}
+```
+
+Der zweite Parameter ist der Name der Tabelle (alternativ ihre numerische ID), der dritte die **Bezeichnung** des Eintrags im Backend. Bei unbekannten, unveröffentlichten oder mehrfach passenden Einträgen bleibt die Ausgabe leer. Bei einer Umbenennung die entsprechenden Tags anpassen. Namen mit `::` sind in dieser Schreibweise nicht verwendbar.
+
+Für einen Detailseiten-Link in einem HTML-Inhaltselement beispielsweise:
+
+```html
+<a href="{{link_url::123}}?directory_entry={{direntry::Mitgliedsbetriebe::Hilzinger GmbH & Co. KG}}">Betrieb ansehen</a>
+```
+
+`123` durch die ID der Contao-Detailseite ersetzen. Auf dieser Seite ein Inhaltselement **Verzeichnistabelle** mit Tabelle **Mitgliedsbetriebe** und Darstellung **Details** einrichten. Der `direntry`-Tag gibt ausschließlich die Eintrags-ID aus, nicht die komplette URL oder den Datensatz. Bei leerem Ergebnis den Link nicht verwenden: Eine Detailseite ohne ausgewählte ID zeigt ihre vollständige Übersicht.
+
+Einzelne Feldwerte lassen sich über die bekannte Eintrags-ID ausgeben:
+
+```text
+{{tabelle::17::FIRMA}}
+{{tabelle::17::TELEFON}}
+{{tabelle::17::_title}}
+```
+
+`17` ist hier eine Beispiel-ID. Feldschlüssel wie `FIRMA` exakt wie in der Tabelle schreiben; `_title` gibt die Backend-Bezeichnung aus. Werte werden als HTML-geschützter Text ausgegeben, ohne HTML aus dem Datenfeld auszuführen. Nicht veröffentlichte Einträge und unbekannte Felder liefern eine leere Ausgabe.
+
 ## Funktionen
 
 - Verzeichnisse, Spalten und Einträge im Backend verwalten.
@@ -48,7 +80,7 @@ php vendor/bin/contao-console cache:clear --env=prod
 
 ## Verwendung
 
-Unter **Inhalte → Verzeichnisse** ein Verzeichnis anlegen und Spalten als eindeutige Schlüssel/Überschriften definieren. Bestehende Schlüssel nicht umbenennen. Über **Einträge verwalten** die Datensätze öffnen; nur veröffentlichte Einträge erscheinen im Frontend.
+Unter **Tabellenverwaltung → Tabellen** ein Verzeichnis anlegen und Spalten als eindeutige Schlüssel/Überschriften definieren. Bestehende Schlüssel nicht umbenennen. Über **Einträge verwalten** die Datensätze öffnen; nur veröffentlichte Einträge erscheinen im Frontend.
 
 In einem Artikel das Inhaltselement **Verzeichnistabelle** hinzufügen. Die Ausgabe-Einstellungen verwenden kommagetrennte Feldschlüssel:
 
@@ -108,11 +140,11 @@ Bei Inhaltselementen und Modulen lässt sich die Darstellung Tabelle, Partnerkar
 
 ## EFG-Import im Backend
 
-Backend-Administratoren können unter **Inhalte → EFG-Daten übernehmen** ein Quellverzeichnis wählen, eine Vorschau prüfen und die bestätigte Übernahme starten. Quelldaten bleiben erhalten; importierte Einträge sind unveröffentlicht. Bestehende Zielnamen verhindern Doppelimporte. EFG kann unabhängig davon weiterhin für Kontaktformular-Mails installiert bleiben.
+Backend-Administratoren können unter **Tabellenverwaltung → EFG-Daten übernehmen** ein Quellverzeichnis wählen, eine Vorschau prüfen und die bestätigte Übernahme starten. Quelldaten bleiben erhalten; importierte Einträge sind unveröffentlicht. Bestehende Zielnamen verhindern Doppelimporte. EFG kann unabhängig davon weiterhin für Kontaktformular-Mails installiert bleiben.
 
 ## CSV-Import und CSV-Export im Backend
 
-Unter **Inhalte → CSV importieren / exportieren** können Administratoren ein vorhandenes Verzeichnis auswählen und dessen Einträge als CSV herunterladen oder gesammelt einlesen. Das Verzeichnis und seine Spalten zuerst unter **Verzeichnisse** anlegen. Auch ein leeres Verzeichnis lässt sich als Vorlage exportieren. Dafür sind weder SSH noch FTP oder Datenbankänderungen erforderlich.
+Unter **Tabellenverwaltung → CSV importieren / exportieren** können Administratoren ein vorhandenes Verzeichnis auswählen und dessen Einträge als CSV herunterladen oder gesammelt einlesen. Das Verzeichnis und seine Spalten zuerst unter **Tabellenverwaltung → Tabellen** anlegen. Auch ein leeres Verzeichnis lässt sich als Vorlage exportieren. Dafür sind weder SSH noch FTP oder Datenbankänderungen erforderlich.
 
 1. Verzeichnis auswählen und **Auswählen** anklicken.
 2. Mit **CSV herunterladen** alle Einträge einschließlich unveröffentlichter Einträge exportieren.

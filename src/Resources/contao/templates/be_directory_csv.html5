@@ -1,25 +1,26 @@
 <?php $escape=static fn($v)=>\Contao\StringUtil::specialchars((string)$v); ?>
-<div class="tl_formbody_edit">
-<h2>CSV importieren / exportieren</h2>
-<p>Zuerst unter „Verzeichnisse“ die Tabelle und ihre Spalten anlegen. Hier kannst du deren Einträge gesammelt übertragen. Es werden keine Einträge gelöscht.</p>
+<?php $this->insert('be_directory_styles'); ?>
+<div class="tl_formbody_edit table-management">
+<p class="tm-intro">Hier kannst du Tabelleneinträge gesammelt herunterladen oder aus einer CSV übernehmen. Neue Tabellen und Spalten legst du unter „Tabellenverwaltung → Tabellen“ an.</p>
 <?php if ($this->error): ?><p class="tl_error"><?= $escape($this->error) ?></p><?php endif; ?>
 <?php if ($this->message): ?><p class="tl_confirm"><?= $escape($this->message) ?></p><?php endif; ?>
+<section class="tm-section"><h2>1. Tabelle auswählen</h2>
 <form method="get">
 <input type="hidden" name="do" value="directory_csv">
-<p><label for="csv_directory">Verzeichnis</label><br><select class="tl_select" id="csv_directory" name="directory" required><option value="">Bitte auswählen</option>
+<p><label for="csv_directory">Tabelle</label><br><select class="tl_select" id="csv_directory" name="directory" required><option value="">Bitte auswählen</option>
 <?php foreach ($this->directories as $item): ?><option value="<?= (int)$item['id'] ?>"<?= (int)$item['id']===$this->directoryId?' selected':'' ?>><?= $escape($item['title']) ?></option><?php endforeach; ?>
-</select> <button class="tl_submit">Auswählen</button></p>
-</form>
+</select></p><p class="tm-actions"><button class="tl_submit">Tabelle auswählen</button></p>
+</form></section>
 <?php if ($this->directory): ?>
-<h3>Export</h3>
-<p>Alle Einträge einschließlich unveröffentlichter Einträge als CSV (UTF-8, Semikolon). Die Datei enthält IDs zur späteren Aktualisierung und dient auch als Vorlage für neue Einträge.</p>
+<section class="tm-section"><h2>CSV exportieren: <?= $escape($this->directory['title']) ?></h2>
+<p class="tm-help">Alle Einträge einschließlich unveröffentlichter Einträge herunterladen. Die CSV dient auch als Vorlage: IDs für Aktualisierungen behalten, für neue Einträge leer lassen.</p>
 <form method="post">
 <input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
 <input type="hidden" name="directory" value="<?= $this->directoryId ?>">
 <p><button class="tl_submit" name="action" value="export">CSV herunterladen</button></p>
-</form>
-<h3>Import</h3>
-<p>CSV mit Kopfzeile, höchstens 5 MB und 10.000 Datensätzen. UTF-8 und Windows-1252 werden unterstützt. Neue Einträge bleiben unveröffentlicht. Bei vorhandenen IDs werden nur zugeordnete Felder aktualisiert; ein leeres zugeordnetes Feld leert den bisherigen Wert.</p>
+</form></section>
+<section class="tm-section"><h2>2. CSV zum Import auswählen</h2>
+<p class="tm-help">CSV mit Kopfzeile, höchstens 5 MB und 10.000 Datensätzen. Neue Einträge bleiben unveröffentlicht. Bestehende IDs aktualisieren die Einträge dieser Tabelle. Gespeichert wird erst nach Vorschau und Bestätigung.</p>
 <form method="post" enctype="multipart/form-data">
 <input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
 <input type="hidden" name="directory" value="<?= $this->directoryId ?>">
@@ -27,26 +28,27 @@
 <p><label for="csv_file">CSV-Datei</label><br><input id="csv_file" type="file" name="csv" accept=".csv,text/csv" required></p>
 <p><label for="csv_delimiter">Trennzeichen</label><br><select id="csv_delimiter" class="tl_select" name="delimiter"><option value="auto">Automatisch erkennen</option><option value=";">Semikolon</option><option value=",">Komma</option><option value="&#9;">Tabulator</option></select></p>
 <p><button class="tl_submit" name="action" value="upload">Datei laden und Spalten zuordnen</button></p>
-</form>
+</form></section>
 <?php if ($this->state): ?>
-<h3>Spalten zuordnen</h3>
-<p><?= count($this->state['csv']['rows']) ?> Datensätze geladen. „Nicht übernehmen“ erhält bestehende Feldwerte. ID nur für die Aktualisierung derselben Tabelle verwenden; ohne ID entstehen neue Einträge. Erneuter Import ohne IDs legt weitere Einträge an.</p>
+<section class="tm-section"><h2>3. Spalten zuordnen</h2>
+<p class="tm-help"><?= count($this->state['csv']['rows']) ?> Datensätze geladen. „Nicht übernehmen“ erhält bestehende Feldwerte. Leere zugeordnete Zellen leeren den bisherigen Wert. Ohne ID entstehen bei jedem Import neue Einträge.</p>
 <form method="post">
 <input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
 <input type="hidden" name="directory" value="<?= $this->directoryId ?>">
 <input type="hidden" name="nonce" value="<?= $escape($this->state['nonce']) ?>">
+<div class="tm-columns">
 <?php $labels=array_column($this->directory['columns'],'value','key')+['_id'=>'Eintrags-ID (optional)','_title'=>'Bezeichnung (optional)']; $index=0; foreach ($this->state['mapping'] as $key=>$source): ?>
 <p><label for="csv_map_<?= $index ?>"><?= $escape($labels[$key]??$key) ?> (<?= $escape($key) ?>)</label><br><select class="tl_select" id="csv_map_<?= $index ?>" name="mapping[<?= $index ?>]"><option value="">Nicht übernehmen</option>
 <?php foreach ($this->state['csv']['header'] as $header): ?><option value="<?= $escape($header) ?>"<?= $source===$header?' selected':'' ?>><?= $escape($header) ?></option><?php endforeach; ?>
 </select></p>
-<?php ++$index; endforeach; ?>
+<?php ++$index; endforeach; ?></div>
 <p><button class="tl_submit" name="action" value="preview">Vorschau erstellen</button></p>
-</form>
+</form></section>
 <?php endif; ?>
 <?php if ($this->preview): ?>
-<h3>Vorschau: <?= $this->preview['new'] ?> neu, <?= $this->preview['updated'] ?> aktualisieren</h3>
+<section class="tm-section"><h2>4. Vorschau: <?= $this->preview['new'] ?> neu, <?= $this->preview['updated'] ?> aktualisieren</h2>
 <p>Die ersten zehn Datensätze der geprüften Zuordnung. Für eine geänderte Zuordnung zuerst erneut „Vorschau erstellen“ anklicken.</p>
-<div style="overflow:auto"><table class="tl_listing"><thead><tr><th>Aktion</th><th>Bezeichnung</th><?php foreach ($this->directory['columns'] as $column): ?><th><?= $escape($column['value']) ?></th><?php endforeach; ?></tr></thead><tbody>
+<div class="tm-table-scroll"><table><thead><tr><th>Aktion</th><th>Bezeichnung</th><?php foreach ($this->directory['columns'] as $column): ?><th><?= $escape($column['value']) ?></th><?php endforeach; ?></tr></thead><tbody>
 <?php foreach (array_slice($this->preview['rows'],0,10) as $row): $values=array_column(unserialize($row['data'],['allowed_classes'=>false]),'value','key'); ?>
 <tr><td><?= $row['id']===null?'Neu':'Aktualisieren #'.(int)$row['id'] ?></td><td><?= $escape($row['title']) ?></td><?php foreach ($this->directory['columns'] as $column): ?><td><?= $escape($values[$column['key']]??'') ?></td><?php endforeach; ?></tr>
 <?php endforeach; ?></tbody></table></div>
@@ -56,7 +58,7 @@
 <input type="hidden" name="nonce" value="<?= $escape($this->state['nonce']) ?>">
 <p><label><input type="checkbox" name="confirmed" value="1" required> Ich habe die Vorschau geprüft und möchte diese Änderungen übernehmen.</label></p>
 <p><button class="tl_submit" name="action" value="execute">Jetzt importieren</button></p>
-</form>
+</form></section>
 <?php endif; endif; ?>
-<p><a href="contao?do=directories">Zur Verzeichnisverwaltung</a></p>
+<p><a href="contao?do=directories">Zur Tabellenübersicht</a></p>
 </div>

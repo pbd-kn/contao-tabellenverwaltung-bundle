@@ -1,0 +1,32 @@
+<?php
+declare(strict_types=1);
+require getenv('BUNDLE_TEST_AUTOLOAD') ?: dirname(__DIR__).'/vendor/autoload.php';
+require_once dirname(__DIR__).'/src/InsertTags/TableInsertTags.php';
+use Doctrine\DBAL\DriverManager;
+use PBDKN\TabellenverwaltungBundle\InsertTags\TableInsertTags;
+function check(bool $condition,string $message):void{if(!$condition)throw new RuntimeException($message);}
+$db=DriverManager::getConnection(['driver'=>'pdo_sqlite','memory'=>true]);
+$db->executeStatement('CREATE TABLE tl_directory (id INTEGER PRIMARY KEY,title TEXT)');
+$db->executeStatement('CREATE TABLE tl_directory_entry (id INTEGER PRIMARY KEY,pid INTEGER,title TEXT,published TEXT,data BLOB)');
+$db->insert('tl_directory',['id'=>1,'title'=>'Mitgliedsbetriebe']);
+$db->insert('tl_directory',['id'=>2,'title'=>'Andere']);
+$db->insert('tl_directory_entry',['id'=>17,'pid'=>1,'title'=>'Müller & Söhne','published'=>'1','data'=>serialize([['key'=>'FIRMA','value'=>'Müller & Söhne'],['key'=>'ORT','value'=>'<script>alert(1)</script>']])]);
+$db->insert('tl_directory_entry',['id'=>18,'pid'=>2,'title'=>'Müller & Söhne','published'=>'1','data'=>serialize([])]);
+$db->insert('tl_directory_entry',['id'=>19,'pid'=>1,'title'=>'Geheim','published'=>'','data'=>serialize([['key'=>'FIRMA','value'=>'Privat']])]);
+$tags=new TableInsertTags($db);
+check($tags->replace('direntry::Mitgliedsbetriebe::Müller & Söhne')==='17','Name lookup failed');
+check($tags->replace('direntry::1::Müller &amp; Söhne')==='17','Numeric directory / entities failed');
+check($tags->replace('direntry::2::Müller & Söhne')==='18','Directory isolation failed');
+check($tags->replace('direntry::1::Geheim')==='','Unpublished ID exposed');
+check($tags->replace('tabelle::19::FIRMA')==='','Unpublished value exposed');
+check($tags->replace('tabelle::17::FIRMA')==='Müller &amp; Söhne','Field output failed');
+check($tags->replace('tabelle::17::_title')==='Müller &amp; Söhne','Title output failed');
+check(!str_contains($tags->replace('tabelle::17::ORT'),'<script>'),'Unsafe HTML output');
+check($tags->replace('direntry::1::missing')==='','Unknown name failed');
+check($tags->replace('tabelle::17::missing')==='','Unknown field failed');
+check($tags->replace('direntry::1')==='','Malformed tag accepted');
+check($tags->replace('other::1::x')===false,'Foreign tag intercepted');
+check($tags->replace("direntry::1::' OR 1=1 --")==='','SQL injection accepted');
+$db->insert('tl_directory_entry',['id'=>20,'pid'=>1,'title'=>'Müller & Söhne','published'=>'1','data'=>serialize([])]);
+check($tags->replace('direntry::1::Müller & Söhne')==='','Ambiguous name selected arbitrarily');
+echo "Insert-tag checks passed: names, IDs, entities, directory isolation, unpublished state, escaping, invalid tags, duplicate names and SQL parameters.\n";

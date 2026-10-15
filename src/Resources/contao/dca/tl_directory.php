@@ -7,8 +7,8 @@ $GLOBALS['TL_DCA']['tl_directory'] = [
         'label' => ['fields' => ['title'], 'format' => '%s'],
         'operations' => [
             'entries' => ['label' => ['Einträge', 'Einträge verwalten'], 'href' => 'table=tl_directory_entry', 'icon' => 'articles.svg'],
-            'edit' => ['label' => ['Einstellungen', 'Verzeichnis bearbeiten'], 'href' => 'act=edit', 'icon' => 'edit.svg'],
-            'delete' => ['label' => ['Löschen', 'Verzeichnis löschen'], 'href' => 'act=delete', 'icon' => 'delete.svg', 'attributes' => 'onclick="if(!confirm(\'Verzeichnis und Einträge löschen?\'))return false;"'],
+            'edit' => ['label' => ['Einstellungen', 'Tabelle bearbeiten'], 'href' => 'act=edit', 'icon' => 'edit.svg'],
+            'delete' => ['label' => ['Löschen', 'Tabelle löschen'], 'href' => 'act=delete', 'icon' => 'delete.svg', 'attributes' => 'onclick="if(!confirm(\'Tabelle und Einträge löschen?\'))return false;"'],
             'show' => ['href' => 'act=show', 'icon' => 'show.svg'],
         ],
     ],
