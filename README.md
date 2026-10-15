@@ -128,7 +128,7 @@ SQLite im Arbeitsspeicher prüft Import, Vorschau, UTF-8, Duplikatschutz und Rep
 
 ## Grenzen
 
-Tabellen, Partnerkarten und Detailansichten können als Inhaltselement oder Frontend-Modul eingebunden werden. Partnerkarten verlinken auf eine konfigurierte Detailseite; die Auswahl erfolgt über directory_entry, ältere numerische EFG-Parameter werden über legacyId unterstützt. Keine Seitennavigation. Suche/Sortierung erfolgen im Arbeitsspeicher; große Verzeichnisse benötigen eine Erweiterung. Beliebiges HTML und serialisierte EFG-Mehrfachwerte werden nicht übernommen. Menü und Seitenlayout sind Teil der Website.
+Tabellen, Partnerkarten und Detailansichten können als Inhaltselement oder Frontend-Modul eingebunden werden. Partnerkarten öffnen ihre Details auf derselben Seite und bieten einen Zurück-Link; ältere separate Detailansichten bleiben verfügbar; die Auswahl erfolgt über directory_entry, ältere numerische EFG-Parameter werden über legacyId unterstützt. Keine Seitennavigation. Suche/Sortierung erfolgen im Arbeitsspeicher; große Verzeichnisse benötigen eine Erweiterung. Beliebiges HTML und serialisierte EFG-Mehrfachwerte werden nicht übernommen. Menü und Seitenlayout sind Teil der Website.
 
 ## Lizenz
 
