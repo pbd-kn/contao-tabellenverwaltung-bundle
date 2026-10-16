@@ -29,6 +29,6 @@ $GLOBALS['TL_DCA']['tl_directory_entry'] = [
         'legacyId' => ['sql' => 'int(10) unsigned NULL'],
         'title' => ['label' => ['Bezeichnung', 'Name zur Suche im Backend'], 'inputType' => 'text', 'search' => true, 'eval' => ['mandatory' => true, 'maxlength' => 255], 'sql' => "varchar(255) NOT NULL default ''"],
         'published' => ['label' => ['Veröffentlicht', 'Auf der Website anzeigen'], 'inputType' => 'checkbox', 'sql' => "char(1) NOT NULL default ''"],
-        'data' => ['label' => ['Feldwerte', 'Die Schlüssel entsprechen den Spalten der Tabelle. Werte sind Klartext.'], 'inputType' => 'keyValueWizard', 'load_callback' => [[EntryData::class, 'load']], 'save_callback' => [[EntryData::class, 'save']], 'sql' => 'blob NULL'],
+        'data' => ['label' => ['Feldwerte', 'Die Schlüssel entsprechen den Spalten der Tabelle. Werte sind Klartext. Lange Werte umbrechen automatisch; die Eingabefelder lassen sich nach unten vergrößern.'], 'inputType' => 'directoryEntryValues', 'load_callback' => [[EntryData::class, 'load']], 'save_callback' => [[EntryData::class, 'save']], 'sql' => 'blob NULL'],
     ],
 ];

@@ -1,4 +1,5 @@
 <?php
+$GLOBALS['BE_FFL']['directoryEntryValues'] = \PBDKN\TabellenverwaltungBundle\Backend\EntryValueWizard::class;
 $GLOBALS['TL_HOOKS']['replaceInsertTags'][] = [\PBDKN\TabellenverwaltungBundle\InsertTags\TableInsertTags::class, 'replace'];
 $tableManagementModules = [
     'directories' => ['tables' => ['tl_directory', 'tl_directory_entry']],

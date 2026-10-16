@@ -6,6 +6,8 @@ Eigenständige Tabellen und Verzeichnisse für Contao. Keine EFG-Abhängigkeit f
 
 Die eigene Menügruppe **Tabellenverwaltung** bündelt **Tabellen**, **EFG-Daten übernehmen** und **CSV importieren / exportieren**. Die Importseiten führen mit getrennten Abschnitten durch Auswahl, Zuordnung, Vorschau und Bestätigung.
 
+Beim Bearbeiten eines Eintrags nutzen die Feldwerte die verfügbare Breite. Lange Werte werden in mehrzeiligen Textfeldern umgebrochen; die Höhe passt sich beim Tippen an und lässt sich am unteren Rand manuell vergrößern. Schlüssel und Zeilenaktionen bleiben erhalten. Das gespeicherte Datenformat bleibt unverändert; es ist keine Datenbankmigration erforderlich.
+
 ## Insert-Tags für einzelne Einträge
 
 Die ID eines veröffentlichten Eintrags anhand von Tabellenname und Bezeichnung ermitteln:
